@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getPostById } from "@/lib/posts";
 import { Button } from "@/components/ui/button";
 import DeletePostButton from "@/components/DeletePostButton";
+import LikeButton from "@/components/LikeButton";
 
 export const metadata = {
   title: "게시글 상세 | 내 블로그",
@@ -41,6 +42,10 @@ export default async function PostDetailPage({
 
       <div className="prose max-w-none leading-relaxed text-foreground">
         <p>{post.content}</p>
+      </div>
+
+      <div className="flex justify-center py-8">
+        <LikeButton />
       </div>
 
       <footer className="flex items-center justify-between pt-6 border-t">
