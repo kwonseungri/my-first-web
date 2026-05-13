@@ -20,7 +20,7 @@ export default async function PostDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const post = getPostById(parseInt(id));
+  const post = getPostById(id);
 
   if (!post) {
     notFound();
@@ -46,11 +46,11 @@ export default async function PostDetailPage({
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
-                  {post.author}
+                  ID: {post.user_id}
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  {post.date}
+                  {new Date(post.created_at).toLocaleDateString()}
                 </div>
               </div>
             </div>

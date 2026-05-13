@@ -45,4 +45,3 @@ CREATE POLICY "본인만 게시글 삭제 가능"
 CREATE POLICY "누구나 프로필 읽기 가능"
   ON profiles FOR SELECT
   USING (true);
-

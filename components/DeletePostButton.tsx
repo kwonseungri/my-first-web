@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 
 interface DeletePostButtonProps {
-  postId: number;
+  postId: string;
 }
 
 export default function DeletePostButton({ postId }: DeletePostButtonProps) {
@@ -28,8 +28,8 @@ export default function DeletePostButton({ postId }: DeletePostButtonProps) {
 
   return (
     <Dialog>
-      <DialogTrigger render={<Button variant="destructive" />}>
-        삭제
+      <DialogTrigger asChild>
+        <Button variant="destructive">삭제</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -39,7 +39,9 @@ export default function DeletePostButton({ postId }: DeletePostButtonProps) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2">
-          <DialogClose render={<Button variant="outline" />}>취소</DialogClose>
+          <DialogClose asChild>
+            <Button variant="outline">취소</Button>
+          </DialogClose>
           <Button variant="destructive" onClick={handleDelete}>
             삭제 확인
           </Button>
