@@ -54,7 +54,7 @@ export default function PostsList({ initialPosts }: PostsListProps) {
                     {post.title}
                   </CardTitle>
                   <CardDescription>
-                    {post.author} · {post.date}
+                    작성자 ID: {post.user_id} · {new Date(post.created_at).toLocaleDateString()}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

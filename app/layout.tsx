@@ -33,6 +33,8 @@ export default function RootLayout({
               <Link href="/" className="hover:underline">홈</Link>
               <Link href="/posts" className="hover:underline">블로그</Link>
               <Link href="/posts/new" className="hover:underline">새 글 쓰기</Link>
+              <Link href="/login" className="hover:underline">로그인</Link>
+              <Link href="/mypage" className="hover:underline">마이페이지</Link>
             </div>
           </nav>
         </header>
