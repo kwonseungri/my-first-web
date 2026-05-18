@@ -57,7 +57,7 @@ export default function NewPostPage() {
       const { data: profile } = await supabase
         .from("profiles")
         .select("id")
-        .eq("id", user.id)
+        .eq("id", user!.id)
         .single();
 
       if (!profile) {
@@ -65,8 +65,8 @@ export default function NewPostPage() {
         const { error: profileError } = await supabase
           .from("profiles")
           .insert({
-            id: user.id,
-            username: user.email?.split('@')[0] || 'user',
+            id: user!.id,
+            username: user!.email?.split('@')[0] || 'user',
             role: 'user'
           });
         
