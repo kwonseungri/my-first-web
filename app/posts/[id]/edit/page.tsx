@@ -1,36 +1,83 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
+import { notFound } from "next/navigation";
 
 interface PostForm {
   title: string;
   content: string;
 }
 
-export default function NewPostPage() {
+export default function EditPostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { id } = use(params);
+  const { user, loading: authLoading } = useAuth();
   
   const [form, setForm] = useState<PostForm>({ title: "", content: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // 1. 로그인 체크 (접근 제어)
   useEffect(() => {
-    if (!loading && !user) {
-      alert("로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.");
-      router.push("/login");
-    }
-  }, [user, loading, router]);
+    async function fetchPost() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("posts")
+          .select("title, content, user_id")
+          .eq("id", id)
+          .single();
 
-  // 로그인 상태 확인 전 로딩 표시
-  if (loading || !user) {
-    return <div className="max-w-2xl mx-auto py-20 text-center text-muted-foreground">권한을 확인하는 중입니다...</div>;
+        if (error) {
+          throw error;
+        }
+
+        if (!data) {
+          return notFound();
+        }
+
+        // 💡 UX 관점의 권한 체크:
+        // 브라우저 단에서 수정 폼 진입을 막는 역할만 수행합니다. 
+        // 실제 API를 직접 찌르는 비정상적인 수정은 Ch11 RLS 정책을 통해 원천 차단됩니다.
+        if (user && data.user_id !== user.id) {
+          alert("본인이 작성한 글만 수정할 수 있습니다.");
+          router.push(`/posts/${id}`);
+          return;
+        }
+
+        setForm({ title: data.title, content: data.content });
+      } catch (err: any) {
+        if (err.code === "PGRST116") {
+          notFound();
+        } else {
+          setErrorMsg("데이터를 불러오지 못했습니다.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (!authLoading) {
+      if (!user) {
+        alert("로그인이 필요한 서비스입니다.");
+        router.push("/login");
+      } else {
+        fetchPost();
+      }
+    }
+  }, [id, user, authLoading, router]);
+
+  if (authLoading || isLoading) {
+    return <div className="max-w-2xl mx-auto py-20 text-center text-muted-foreground">로딩 중...</div>;
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -38,7 +85,6 @@ export default function NewPostPage() {
     setForm({ ...form, [name]: value });
   }
 
-  // 2. 게시글 저장 로직
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrorMsg(null);
@@ -53,46 +99,21 @@ export default function NewPostPage() {
     try {
       const supabase = createClient();
       
-      // [자동 복구 로직] 기존 계정의 프로필 누락 방지 (외래키 에러 해결)
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", user.id)
-        .single();
-
-      if (!profile) {
-        // 프로필이 없다면 강제로 생성 시도
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .insert({
-            id: user.id,
-            username: user.email?.split('@')[0] || 'user',
-            role: 'user'
-          });
-        
-        if (profileError) {
-          throw new Error("프로필(계정 정보) 복구 실패: " + profileError.message + " (이 메시지를 알려주세요!)");
-        }
-      }
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("posts")
-        .insert({
+        .update({
           title: form.title,
           content: form.content,
-          user_id: user!.id // 현재 로그인한 사용자의 ID 적용
         })
-        .select("id")
-        .single(); // 방금 생성된 글의 ID를 받기 위해 추가
+        .eq("id", id);
 
       if (error) {
         throw error;
       }
 
-      // 저장 성공 시 생성된 글의 상세 페이지로 이동
-      router.push(`/posts/${data.id}`);
+      router.push(`/posts/${id}`);
     } catch (err: any) {
-      setErrorMsg("게시글 저장에 실패했습니다. " + err.message);
+      setErrorMsg("게시글 수정에 실패했습니다. " + err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -100,7 +121,12 @@ export default function NewPostPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold">새 글 쓰기</h1>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold">게시글 수정</h1>
+        <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
+          * 현재 작성자 본인 확인 로직은 브라우저 상의 UI/UX 처리입니다. 실제 DB 레벨의 완벽한 보안 처리는 <b>Ch11(Row Level Security)</b> 파트에서 학습 및 적용됩니다.
+        </p>
+      </div>
       
       {errorMsg && (
         <div className="p-4 text-sm text-destructive bg-destructive/10 rounded-lg border border-destructive/20">
@@ -143,12 +169,12 @@ export default function NewPostPage() {
             className="px-8"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "저장 중..." : "작성하기"}
+            {isSubmitting ? "수정 중..." : "수정 완료"}
           </Button>
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/posts")}
+            onClick={() => router.push(`/posts/${id}`)}
             disabled={isSubmitting}
           >
             취소

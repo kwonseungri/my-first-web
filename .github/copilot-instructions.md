@@ -1,6 +1,6 @@
 ## Tech Stack
 
-- Next.js 16.2.6 (교재 기준: 16.2.1, App Router 전용)
+- Next.js 16.2.6 (교재 기준: 16.2.1, App Router 전용, next/router 금지)
 - React 19.2.4
 - Tailwind CSS 4
 - @supabase/supabase-js 2.105.4 (교재 기준: 2.47.12)
@@ -17,11 +17,22 @@
 ## Coding Conventions
 
 - Server Component를 기본으로 하며, 인터랙션이 필요한 경우에만 Client Component 사용.
+- App Router 전용 (pages/ 폴더 사용 절대 금지). `next/router` 대신 `next/navigation` 필수 사용.
+- Next.js 16에서는 params가 Promise이므로 반드시 `await params` 사용.
 - Tailwind CSS 4 사용. CSS 변수 기반 디자인 토큰 활용.
 - Supabase Auth: `signInWithPassword`를 사용하며, 구버전 `auth.signIn()`은 사용 금지.
 - 인증 보호: `middleware.ts`를 사용하여 보호된 라우트(예: /posts/new, /mypage)를 관리.
+- 전역 상태 관리: Ch9에서 구현한 `useAuth` / `AuthProvider` 사용.
+- Supabase 클라이언트: Ch8 기준의 `lib/supabase/client.ts` 활용.
 - 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 고정.
 - 소셜 로그인 배제: 이메일/비밀번호 인증만 구현.
+
+## DB Schema (Ch10 기준)
+
+- 데이터 모델은 Ch8 기준을 따르며, 컬럼명을 임의로 절대 변경하지 않는다.
+  - `posts`: id, user_id, title, content, created_at
+  - `profiles`: id, username, avatar_url, role
+- 게시글 수정/삭제 UI는 UX 향상을 위한 것이며, 실제 보안 로직은 Ch11 RLS에서 처리한다.
 
 ## Design Tokens
 

@@ -8,6 +8,9 @@ Refer to [AGENTS.md](file:///c:/my-first-web/AGENTS.md) and [.github/copilot-ins
 - Lint: `npm run lint`
 
 ## Project Focus
-- Current: Ch9 Supabase Auth (Email/Password)
-- Database: profiles, posts tables (Supabase)
+- Current: Ch10 Posts CRUD (Create, Read, Update, Delete)
+- Architecture: Next.js App Router (next/navigation only)
+- Database: profiles, posts tables (Follow Ch8 schema strictly, use `lib/supabase/client.ts`)
+- Auth State: `useAuth` / `AuthProvider` (Ch9)
+- Note: Edit/Delete security will be applied in Ch11 (RLS). Currently focusing on UX.
 - UI: Tailwind CSS 4, shadcn/ui
