@@ -21,3 +21,17 @@ export interface PostWithProfile extends Post {
   profiles: Pick<Profile, "username" | "avatar_url">;
 }
 
+export interface Comment {
+  id: string;          // UUID
+  post_id: string;     // → posts.id 참조
+  user_id: string;     // → profiles.id 참조
+  content: string;
+  created_at: string;  // ISO 8601 형식
+}
+
+// comments 조회 시 작성자(profile) 정보를 함께 가져올 때 사용하는 타입
+export interface CommentWithProfile extends Comment {
+  profiles: Pick<Profile, "username" | "avatar_url"> | null;
+}
+
+

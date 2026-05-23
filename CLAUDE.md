@@ -8,9 +8,9 @@ Refer to [AGENTS.md](file:///c:/my-first-web/AGENTS.md) and [.github/copilot-ins
 - Lint: `npm run lint`
 
 ## Project Focus
-- Current: Ch10 Posts CRUD (Create, Read, Update, Delete)
+- Current: Ch11 Row Level Security (RLS) & Security Hardening
 - Architecture: Next.js App Router (next/navigation only)
 - Database: profiles, posts tables (Follow Ch8 schema strictly, use `lib/supabase/client.ts`)
 - Auth State: `useAuth` / `AuthProvider` (Ch9)
-- Note: Edit/Delete security will be applied in Ch11 (RLS). Currently focusing on UX.
+- Note: Enforce real backend security using Supabase RLS policies (via CLI migrations). Never use service_role in client-side code.
 - UI: Tailwind CSS 4, shadcn/ui

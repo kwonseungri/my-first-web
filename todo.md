@@ -20,17 +20,21 @@
 - [x] `middleware.ts`를 활용한 라우트 보호 (작성, 마이페이지 등)
 - [x] 헤더 내 로그인 상태에 따른 UI 분기 처리
 
-## 4단계: 게시글 CRUD 구현 (Ch10) (진행 중)
+## 4단계: 게시글 CRUD 구현 (Ch10) (완료)
 
-- [ ] Server Actions를 활용한 글 작성/수정/삭제 연동
-- [ ] 글 작성 화면 구현 (마크다운 에디터 등)
-- [ ] 글 수정/삭제 UI 구현 (UX 용도, 실제 보안은 Ch11에서 처리)
-- [ ] posts 컬럼명 Ch8 스키마 그대로 사용 확인
+- [x] Server Actions를 활용한 글 작성/수정/삭제 연동
+- [x] 글 작성 화면 구현 (마크다운 에디터 등)
+- [x] 글 수정/삭제 UI 구현 (UX 용도, 실제 보안은 Ch11에서 처리)
+- [x] posts 컬럼명 Ch8 스키마 그대로 사용 확인
 
-## 5단계: RLS 보안 및 고도화 (Ch11 이후) (미착수)
+## 5단계: RLS 보안 및 고도화 (Ch11 이후) (진행 중)
 
-- [ ] Row Level Security (RLS) 정책 설정 (실제 데이터 접근 권한 제어)
-- [ ] 댓글 시스템 구현
-- [ ] 프로필 이미지 업로드 (Supabase Storage)
+- [x] Row Level Security (RLS) 정책 설계 및 가이드 문서(`docs/ch11.md`) 작성
+- [x] `profiles` 테이블 RLS 정책 설정 (Supabase CLI 마이그레이션 생성)
+- [x] `posts` 테이블 RLS 정책 설정 (Supabase CLI 마이그레이션 생성)
+- [x] `service_role` 키 노출 여부 전수 검사
+- [x] RLS 정책 적용 후 비인가 API 호출 차단 검증
+- [x] 댓글 시스템 구현
+- [x] 프로필 이미지 업로드 (Supabase Storage)
 
-## 진행률: 8/15 (53%)
+## 진행률: 22/22 (100%)

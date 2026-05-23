@@ -27,12 +27,15 @@
 - 환경변수: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` 고정.
 - 소셜 로그인 배제: 이메일/비밀번호 인증만 구현.
 
-## DB Schema (Ch10 기준)
+## DB Schema & Security (Ch11 기준)
 
 - 데이터 모델은 Ch8 기준을 따르며, 컬럼명을 임의로 절대 변경하지 않는다.
   - `posts`: id, user_id, title, content, created_at
   - `profiles`: id, username, avatar_url, role
-- 게시글 수정/삭제 UI는 UX 향상을 위한 것이며, 실제 보안 로직은 Ch11 RLS에서 처리한다.
+- **Row Level Security (RLS) 강제**:
+  - 데이터의 생성/수정/삭제 권한 제어는 프론트엔드 UI 조건부 노출이나 미들웨어에 의존하지 않으며, 오직 데이터베이스 RLS 정책(`auth.uid() = user_id`)으로만 강제한다.
+  - RLS 활성화 및 모든 보안 정책은 Supabase 대시보드 직접 실행이 아닌 **Supabase CLI 마이그레이션 파일**로 정의하여 프로젝트 코드베이스로 이력을 남겨 관리한다.
+  - RLS를 우회하는 `service_role` 키는 절대로 클라이언트(브라우저) 영역에 노출되거나 사용될 수 없으며, 반드시 `anon` 키만을 사용해야 한다.
 
 ## Design Tokens
 

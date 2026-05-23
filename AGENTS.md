@@ -10,6 +10,6 @@
   - Use `@supabase/ssr` for authentication and follow `useAuth` / `AuthProvider` global state (Ch9).
   - Use `middleware.ts` for route protection.
   - `posts` column names MUST match Ch8 schema exactly.
-  - Edit/Delete UI for posts is for UX only. Actual security will be handled via RLS in Ch11.
+  - Row Level Security (RLS) is now enforced in Ch11. Actual security is handled strictly via DB RLS policies (managed in Supabase CLI migrations), and service_role key must never be used in client-side code.
   - Follow the Version Policy in `.github/copilot-instructions.md`.
 <!-- END:nextjs-agent-rules -->
