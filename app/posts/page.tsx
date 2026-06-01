@@ -37,7 +37,7 @@ export default function PostsPage() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
       <div className="mb-10 space-y-2">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl bg-gradient-to-r from-blue-600 to-indigo-400 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground drop-shadow-sm">
           블로그 글 목록
         </h1>
         <p className="text-muted-foreground text-lg italic">

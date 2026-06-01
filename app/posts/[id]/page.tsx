@@ -229,7 +229,7 @@ export default function PostDetailPage({
         <Card className="border-none shadow-none bg-transparent">
           <CardHeader className="px-0 space-y-4">
             <div className="space-y-2">
-              <CardTitle className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight leading-snug">
                 {post.title}
               </CardTitle>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">

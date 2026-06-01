@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "내 블로그",
-  description: "개인 블로그입니다.",
+  title: "승리의 블로그",
+  description: "Next.js로 만든 블로그입니다.",
 };
 
 export default function RootLayout({
@@ -35,8 +35,8 @@ export default function RootLayout({
             {children}
           </main>
         </AuthProvider>
-        <footer className="text-center text-gray-500 py-6 border-t mt-auto">
-          © 2026 내 블로그
+        <footer className="py-6 text-center text-sm text-muted-foreground border-t border-border mt-auto">
+          © 2026 승리의 블로그
         </footer>
       </body>
     </html>
