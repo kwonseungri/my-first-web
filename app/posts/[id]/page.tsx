@@ -191,7 +191,12 @@ export default function PostDetailPage({
   }
 
   if (isLoading) {
-    return <div className="max-w-3xl mx-auto py-20 text-center text-muted-foreground">로딩 중...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+        <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+        <p className="text-muted-foreground font-medium animate-pulse">게시글을 불러오는 중입니다...</p>
+      </div>
+    );
   }
 
   if (error === "not_found" || !post) {
@@ -199,7 +204,15 @@ export default function PostDetailPage({
   }
 
   if (error) {
-    return <div className="max-w-3xl mx-auto py-20 text-center text-destructive">{error}</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-3 text-center px-4">
+        <div className="bg-destructive/10 p-4 rounded-full">
+          <span className="text-3xl">⚠️</span>
+        </div>
+        <h2 className="text-xl font-bold text-destructive">오류가 발생했습니다</h2>
+        <p className="text-muted-foreground">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -269,7 +282,10 @@ export default function PostDetailPage({
         {/* 댓글 목록 */}
         <div className="space-y-4">
           {isCommentsLoading ? (
-            <p className="text-sm text-muted-foreground py-4">댓글을 불러오는 중입니다...</p>
+            <div className="flex items-center justify-center py-10 space-x-3">
+               <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+               <p className="text-sm text-muted-foreground">댓글을 불러오는 중입니다...</p>
+            </div>
           ) : comments.length === 0 ? (
             <div className="p-8 text-center border rounded-xl bg-muted/20 text-muted-foreground">
               첫 번째 댓글을 남겨보세요!

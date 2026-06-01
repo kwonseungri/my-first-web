@@ -71,8 +71,10 @@ export default function PostsList({ initialPosts }: PostsListProps) {
             </Link>
           ))
         ) : (
-          <div className="col-span-full py-20 text-center text-muted-foreground border-2 border-dashed rounded-xl">
-            검색 결과가 없습니다.
+          <div className="col-span-full py-20 text-center flex flex-col items-center justify-center space-y-3 border-2 border-dashed border-border rounded-xl bg-card/30">
+            <div className="text-4xl opacity-50 mb-2">🔍</div>
+            <p className="text-muted-foreground font-medium text-lg">검색 결과가 없습니다</p>
+            <p className="text-sm text-muted-foreground">다른 검색어로 다시 시도해보세요.</p>
           </div>
         )}
       </div>

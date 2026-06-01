@@ -36,5 +36,19 @@
 - [x] RLS 정책 적용 후 비인가 API 호출 차단 검증
 - [x] 댓글 시스템 구현
 - [x] 프로필 이미지 업로드 (Supabase Storage)
+## 6단계: 에러 처리 및 UX 개선 (Ch12) (완료)
 
-## 진행률: 22/22 (100%)
+- [x] 로딩 상태 UI 적용 (loading.tsx 및 스켈레톤 디자인)
+- [x] 빈 화면(Empty State) 친절한 안내 문구 적용
+- [x] 에러 발생 시 앱 중단 방지 및 error.tsx 추가
+- [x] 친절한 에러 메시지 변환 유틸리티 (lib/error-message.ts)
+- [x] 문서(context, todo, ARCHITECTURE) 최신화 작업
+
+## 7단계: 최종 검증 및 배포 테스트 (진행 중)
+
+- [x] Playwright E2E 테스트 스크립트 구축 완료 (테스트 자체는 통과)
+- [ ] 로컬 E2E 테스트 환경 변수 주입 후 재확인
+- [x] Vercel 환경 변수 등록 확인
+- [ ] Vercel 실제 배포 URL 수동 접속 및 기능(Auth, DB) 검증
+
+## 진행률: 28/31 (90%)

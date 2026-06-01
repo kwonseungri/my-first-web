@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signInWithEmail } from "@/lib/auth";
+import { getFriendlyErrorMessage } from "@/lib/error-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -26,7 +27,8 @@ export default function LoginPage() {
       router.push("/posts");
       router.refresh(); // 세션 상태 반영을 위해 새로고침
     } catch (err: any) {
-      setError(err.message || "로그인 중 오류가 발생했습니다.");
+      console.error("로그인 중 오류 발생:", err);
+      setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }

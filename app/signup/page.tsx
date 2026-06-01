@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUpWithEmail } from "@/lib/auth";
+import { getFriendlyErrorMessage } from "@/lib/error-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -31,7 +32,8 @@ export default function SignupPage() {
         router.push("/login");
       }, 2000);
     } catch (err: any) {
-      setError(err.message || "회원가입 중 오류가 발생했습니다.");
+      console.error("회원가입 중 오류 발생:", err);
+      setError(getFriendlyErrorMessage(err));
     } finally {
       setLoading(false);
     }

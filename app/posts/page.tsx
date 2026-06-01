@@ -46,12 +46,26 @@ export default function PostsPage() {
       </div>
 
       <div className="bg-card/50 backdrop-blur-sm border rounded-3xl p-6 md:p-8 shadow-sm min-h-[300px]">
-        {isLoading && <p className="text-center text-muted-foreground py-10">로딩 중...</p>}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+            <p className="text-muted-foreground font-medium animate-pulse">로딩 중...</p>
+          </div>
+        )}
         
-        {error && <p className="text-center text-destructive py-10">{error}</p>}
+        {error && (
+          <div className="flex flex-col items-center justify-center py-20 space-y-3 text-center bg-destructive/5 rounded-xl border border-destructive/20 mt-4">
+            <div className="text-destructive font-bold text-lg">오류가 발생했습니다</div>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
+        )}
         
         {!isLoading && !error && posts.length === 0 && (
-          <p className="text-center text-muted-foreground py-10">작성된 글이 없습니다.</p>
+          <div className="flex flex-col items-center justify-center py-20 space-y-4 text-center border-2 border-dashed rounded-xl bg-card/30">
+            <div className="text-4xl opacity-50 mb-2">📝</div>
+            <p className="text-muted-foreground font-medium text-lg">아직 작성된 글이 없습니다.</p>
+            <p className="text-sm text-muted-foreground">첫 번째 게시글의 주인공이 되어보세요!</p>
+          </div>
         )}
         
         {!isLoading && !error && posts.length > 0 && (

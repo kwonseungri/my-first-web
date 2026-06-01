@@ -19,6 +19,7 @@ export default function NewPostPage() {
   const [form, setForm] = useState<PostForm>({ title: "", content: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<{ title?: string; content?: string }>({});
 
   // 1. 로그인 체크 (접근 제어)
   useEffect(() => {
@@ -42,9 +43,24 @@ export default function NewPostPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrorMsg(null);
+    setValidationErrors({});
 
-    if (!form.title.trim() || !form.content.trim()) {
-      setErrorMsg("제목과 내용을 모두 입력해주세요.");
+    const errors: { title?: string; content?: string } = {};
+
+    if (!form.title.trim()) {
+      errors.title = "제목을 입력해주세요.";
+    } else if (form.title.trim().length < 2) {
+      errors.title = "제목은 최소 2자 이상 입력해주세요.";
+    }
+
+    if (!form.content.trim()) {
+      errors.content = "내용을 입력해주세요.";
+    } else if (form.content.trim().length < 10) {
+      errors.content = "내용은 최소 10자 이상 입력해주세요.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
       return;
     }
 
@@ -92,7 +108,8 @@ export default function NewPostPage() {
       // 저장 성공 시 생성된 글의 상세 페이지로 이동
       router.push(`/posts/${data.id}`);
     } catch (err: any) {
-      setErrorMsg("게시글 저장에 실패했습니다. " + err.message);
+      console.error("게시글 저장 중 서버 오류 발생:", err);
+      setErrorMsg("게시글 저장 중 예상치 못한 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }
@@ -119,9 +136,12 @@ export default function NewPostPage() {
             value={form.title}
             onChange={handleChange}
             placeholder="게시글 제목을 입력하세요"
-            className="text-lg py-6"
+            className={`text-lg py-6 ${validationErrors.title ? "border-destructive focus-visible:ring-destructive" : ""}`}
             disabled={isSubmitting}
           />
+          {validationErrors.title && (
+            <p className="text-sm text-destructive font-medium">{validationErrors.title}</p>
+          )}
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -131,11 +151,18 @@ export default function NewPostPage() {
             name="content"
             value={form.content}
             onChange={handleChange}
-            placeholder="내용을 자유롭게 입력하세요"
+            placeholder="내용을 자유롭게 입력하세요 (최소 10자 이상)"
             rows={10}
             disabled={isSubmitting}
-            className="flex min-h-[200px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+            className={`flex min-h-[200px] w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 resize-none ${
+              validationErrors.content 
+                ? "border-destructive focus-visible:ring-destructive" 
+                : "border-input focus-visible:ring-ring"
+            }`}
           />
+          {validationErrors.content && (
+            <p className="text-sm text-destructive font-medium">{validationErrors.content}</p>
+          )}
         </div>
         <div className="flex gap-3 pt-4">
           <Button
