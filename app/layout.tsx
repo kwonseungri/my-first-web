@@ -5,6 +5,8 @@ import "./globals.css";
 
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
+import { Toaster } from "@/components/ui/sonner";
+import NotificationListener from "@/components/NotificationListener";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +32,13 @@ export default function RootLayout({
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         <AuthProvider>
+          <NotificationListener />
           <Header />
           <main className="flex-1 max-w-4xl mx-auto p-6 w-full">
             {children}
           </main>
         </AuthProvider>
+        <Toaster />
         <footer className="py-6 text-center text-sm text-muted-foreground border-t border-border mt-auto">
           © 2026 승리의 블로그
         </footer>

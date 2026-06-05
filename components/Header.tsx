@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Loader2, PenSquare, LogOut, User as UserIcon, ChevronDown, BookOpen } from "lucide-react";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface UserProfile {
   username: string;
@@ -116,6 +117,9 @@ export default function Header() {
                 <PenSquare className="h-3.5 w-3.5" />
                 새 글 쓰기
               </Link>
+
+              {/* 알림 드롭다운 */}
+              <NotificationDropdown />
 
               {/* 아바타 + 드롭다운 */}
               <div className="relative" ref={dropdownRef}>

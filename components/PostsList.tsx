@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Post } from "@/lib/posts";
-import { Search } from "lucide-react";
+import { Search, Eye } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -62,8 +62,12 @@ export default function PostsList({ initialPosts }: PostsListProps) {
                     {post.content}
                   </p>
                 </CardContent>
-                <CardFooter>
-                  <Button variant="ghost" className="p-0 h-auto group-hover:translate-x-1 transition-transform">
+                <CardFooter className="flex justify-between items-center text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Eye className="h-4 w-4" />
+                    <span>{post.views || 0}</span>
+                  </div>
+                  <Button variant="ghost" className="p-0 h-auto group-hover:translate-x-1 transition-transform text-foreground">
                     자세히 보기 →
                   </Button>
                 </CardFooter>

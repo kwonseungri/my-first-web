@@ -16,7 +16,7 @@ export default function PostsPage() {
         const supabase = createClient();
         const { data, error } = await supabase
           .from("posts")
-          .select("id, title, content, created_at, user_id")
+          .select("id, title, content, views, created_at, user_id")
           .order("created_at", { ascending: false });
 
         if (error) {

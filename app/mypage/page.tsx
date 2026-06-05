@@ -25,6 +25,10 @@ import {
   ChevronRight,
   Loader2,
   Check,
+  Users,
+  Eye,
+  Flame,
+  CalendarCheck,
 } from "lucide-react";
 
 export default function MyPage() {
@@ -39,6 +43,16 @@ export default function MyPage() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  
+  // 팔로워/팔로잉 상태
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+
+  // 출석체크 상태
+  const [totalAttendances, setTotalAttendances] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [hasCheckedInToday, setHasCheckedInToday] = useState(false);
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -87,13 +101,65 @@ export default function MyPage() {
         // 내가 작성한 글 로드
         const { data: postsData, error: postsError } = await supabase
           .from("posts")
-          .select("id, title, content, created_at, user_id")
+          .select("id, title, content, views, created_at, user_id")
           .eq("user_id", user!.id)
           .order("created_at", { ascending: false });
 
         if (!postsError && postsData) {
           setMyPosts(postsData as Post[]);
         }
+
+        // 팔로워 수 및 팔로잉 수 로드
+        const { count: followers } = await supabase
+          .from("follows")
+          .select("*", { count: "exact", head: true })
+          .eq("following_id", user!.id);
+        
+        const { count: followings } = await supabase
+          .from("follows")
+          .select("*", { count: "exact", head: true })
+          .eq("follower_id", user!.id);
+          
+        setFollowerCount(followers || 0);
+        setFollowingCount(followings || 0);
+        
+        // 출석체크 데이터 로드
+        const { data: attendanceData } = await supabase
+          .from("attendances")
+          .select("check_date")
+          .eq("user_id", user!.id)
+          .order("check_date", { ascending: false });
+
+        if (attendanceData && attendanceData.length > 0) {
+          setTotalAttendances(attendanceData.length);
+          
+          const now = new Date();
+          const localToday = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
+          
+          const dates = attendanceData.map(a => a.check_date);
+          const hasToday = dates.includes(localToday);
+          
+          let streakCount = 0;
+          let currentDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
+          
+          if (!hasToday) {
+             currentDate.setDate(currentDate.getDate() - 1);
+          }
+
+          while (true) {
+             const dateStr = currentDate.toISOString().split("T")[0];
+             if (dates.includes(dateStr)) {
+                streakCount++;
+                currentDate.setDate(currentDate.getDate() - 1);
+             } else {
+                break;
+             }
+          }
+          
+          setHasCheckedInToday(hasToday);
+          setStreak(streakCount);
+        }
+        
       } catch (err) {
         console.error("데이터를 불러오는데 실패했습니다:", err);
       } finally {
@@ -188,6 +254,25 @@ export default function MyPage() {
     }
   }
 
+  // 4. 출석체크 핸들러
+  async function handleCheckIn() {
+    if (!user || hasCheckedInToday || isCheckingIn) return;
+    setIsCheckingIn(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.rpc("check_in");
+      if (error) throw error;
+      
+      setHasCheckedInToday(true);
+      setStreak(prev => prev + 1);
+      setTotalAttendances(prev => prev + 1);
+    } catch (err: any) {
+      alert("출석체크 실패: " + err.message);
+    } finally {
+      setIsCheckingIn(false);
+    }
+  }
+
   if (loading || isDataLoading) {
     return <div className="max-w-4xl mx-auto py-24 text-center text-muted-foreground">로딩 중...</div>;
   }
@@ -250,6 +335,19 @@ export default function MyPage() {
               )}
             </div>
 
+            {/* 팔로워 / 팔로잉 통계 */}
+            <div className="flex gap-6 items-center text-sm">
+              <div className="flex flex-col items-center text-muted-foreground">
+                <span className="font-semibold text-foreground text-base">{followerCount}</span>
+                팔로워
+              </div>
+              <div className="h-8 w-px bg-border"></div>
+              <div className="flex flex-col items-center text-muted-foreground">
+                <span className="font-semibold text-foreground text-base">{followingCount}</span>
+                팔로잉
+              </div>
+            </div>
+
             {/* 프로필 입력 양식 */}
             <form onSubmit={handleSaveProfile} className="w-full space-y-4">
               <div className="space-y-1.5">
@@ -300,6 +398,50 @@ export default function MyPage() {
           </CardContent>
         </Card>
 
+        {/* 나의 출석부 카드 */}
+        <Card className="md:col-span-1 shadow-sm border border-border/80 bg-card/60 backdrop-blur-md">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-lg font-bold flex items-center justify-center gap-2">
+              <CalendarCheck className="h-5 w-5 text-primary" />
+              나의 출석부
+            </CardTitle>
+            <CardDescription>매일 출석하고 불꽃을 모아보세요!</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-6 pt-4">
+            <div className="flex gap-8 items-center text-center">
+              <div className="flex flex-col items-center">
+                <span className="text-3xl mb-1">🔥</span>
+                <span className="font-bold text-xl text-foreground">{streak}일</span>
+                <span className="text-xs text-muted-foreground mt-1">연속 출석</span>
+              </div>
+              <div className="h-12 w-px bg-border"></div>
+              <div className="flex flex-col items-center">
+                <span className="text-3xl mb-1">📅</span>
+                <span className="font-bold text-xl text-foreground">{totalAttendances}일</span>
+                <span className="text-xs text-muted-foreground mt-1">총 출석</span>
+              </div>
+            </div>
+
+            <Button 
+              onClick={handleCheckIn}
+              disabled={hasCheckedInToday || isCheckingIn}
+              className={`w-full rounded-xl py-6 font-bold text-base transition-all ${
+                hasCheckedInToday 
+                  ? "bg-muted text-muted-foreground border-2 border-dashed border-muted-foreground/30 shadow-none opacity-80" 
+                  : "bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl hover:-translate-y-1"
+              }`}
+            >
+              {isCheckingIn ? (
+                <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> 처리 중...</>
+              ) : hasCheckedInToday ? (
+                <><Check className="mr-2 h-5 w-5 text-emerald-500" /> 오늘 출석 완료</>
+              ) : (
+                "오늘 출석하기"
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* 내가 쓴 글 카드 */}
         <Card className="md:col-span-2 shadow-sm border border-border/80">
           <CardHeader className="pb-2">
@@ -333,10 +475,16 @@ export default function MyPage() {
                         <h3 className="font-bold text-base group-hover:text-primary transition-colors text-foreground line-clamp-1">
                           {post.title}
                         </h3>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </p>
+                        <div className="text-xs text-muted-foreground flex items-center gap-3 mt-1">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(post.created_at).toLocaleDateString()}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Eye className="h-3 w-3" />
+                            {post.views || 0}
+                          </span>
+                        </div>
                       </div>
                       <ChevronRight className="h-5 w-5 text-muted-foreground/60 group-hover:text-primary transition-colors transform group-hover:translate-x-1 duration-200 flex-shrink-0" />
                     </div>
